@@ -26,17 +26,27 @@ export interface Country {
   };
 }
 
-export interface ParamsProps {
-  params: { id: string };
+export interface PageProps {
+  params: Promise<{ id: string }>;
 }
 
 export interface SearchParamsProps {
-  searchParams: { [key: string]: string | undefined };
+  q?: string;
+  filter?: string;
+  page?: string;
 }
 
-export interface URLProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | undefined };
+interface PageProps {
+  searchParams: Promise<{
+    q?: string;
+    filter?: string;
+    page?: string;
+  }>;
+}
+
+interface URLProps {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+  params: Promise<{ id: string }>;
 }
 
 export interface BadgeCounts {

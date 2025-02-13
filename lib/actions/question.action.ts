@@ -121,11 +121,12 @@ export async function createQuestion(params: CreateQuestionParams) {
   }
 }
 
-export async function getQuestionById(params: GetQuestionByIdParams) {
+export async function getQuestionById(props: GetQuestionByIdParams) {
   try {
     connectToDatabase();
 
-    const { questionId } = params;
+    const { questionId } = props;
+    console.log("questionId", questionId);
 
     const question = await Question.findById(questionId)
       .populate({ path: "tags", model: Tag, select: "_id name" })

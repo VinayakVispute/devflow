@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import UserCard from "@/components/cards/UserCard";
 import Filter from "@/components/shared/Filter";
 import Pagination from "@/components/shared/Pagination";
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   description: "Developer community for coding Q&A and collaboration.",
 };
 
-const Page = async (props: SearchParamsProps) => {
+const Page = async (props: { searchParams: Promise<SearchParamsProps> }) => {
   const searchParams = await props.searchParams;
   const result = await getAllUsers({
     searchQuery: searchParams.q,
@@ -29,18 +30,22 @@ const Page = async (props: SearchParamsProps) => {
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearchbar
-          route="/community"
-          iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
-          placeholder="Search for amazing minds"
-          otherClasses="flex-1"
-        />
+        <Suspense fallback={<div>Loading search...</div>}>
+          <LocalSearchbar
+            route="/community"
+            iconPosition="left"
+            imgSrc="/assets/icons/search.svg"
+            placeholder="Search for amazing minds"
+            otherClasses="flex-1"
+          />{" "}
+        </Suspense>
 
-        <Filter
-          filters={UserFilters}
-          otherClasses="min-h-[56px] sm:min-w-[170px]"
-        />
+        <Suspense fallback={<div>Loading filter...</div>}>
+          <Filter
+            filters={UserFilters}
+            otherClasses="min-h-[56px] sm:min-w-[170px]"
+          />
+        </Suspense>
       </div>
 
       <section className="mt-12 flex flex-wrap gap-4">

@@ -1,17 +1,18 @@
 import Question from "@/components/forms/Question";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
-import { ParamsProps } from "@/types";
+import { PageProps } from "@/types";
 import { auth } from "@clerk/nextjs/server";
 
-const Page = async (props: ParamsProps) => {
-  const params = await props.params;
+const Page = async ({ params }: PageProps) => {
+  const { id: questionId } = await params;
   const { userId } = await auth();
-
+  // const Page = async (props: { searchParams: Promise<SearchParamsProps> }) => {
+  //
   if (!userId) return null;
 
   const mongoUser = await getUserById({ userId });
-  const result = await getQuestionById({ questionId: params.id });
+  const result = await getQuestionById({ questionId });
 
   return (
     <>

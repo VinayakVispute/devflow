@@ -5,20 +5,22 @@ import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { QuestionFilters } from "@/constants/filters";
 import { getSavedQuestions } from "@/lib/actions/user.action";
-import { SearchParamsProps } from "@/types";
+import { PageProps } from "@/types";
 import { auth } from "@clerk/nextjs/server";
+import { Suspense } from "react";
 
-export default async function Home(props: SearchParamsProps) {
-  const searchParams = await props.searchParams;
+export default async function Home({ searchParams }: PageProps) {
   const { userId } = await auth();
 
   if (!userId) return null;
 
+  const { q, filter, page } = await searchParams;
+
   const result = await getSavedQuestions({
     clerkId: userId,
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page: searchParams.page ? +searchParams.page : 1,
+    searchQuery: q,
+    filter: filter,
+    page: page ? +page : 1,
   });
 
   return (
@@ -26,14 +28,15 @@ export default async function Home(props: SearchParamsProps) {
       <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearchbar
-          route="/"
-          iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
-          placeholder="Search for questions"
-          otherClasses="flex-1"
-        />
-
+        <Suspense fallback={<div>Loading...</div>}>
+          <LocalSearchbar
+            route="/"
+            iconPosition="left"
+            imgSrc="/assets/icons/search.svg"
+            placeholder="Search for questions"
+            otherClasses="flex-1"
+          />
+        </Suspense>
         <Filter
           filters={QuestionFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
@@ -66,10 +69,7 @@ export default async function Home(props: SearchParamsProps) {
       </div>
 
       <div className="mt-10">
-        <Pagination
-          pageNumber={searchParams?.page ? +searchParams.page : 1}
-          isNext={result.isNext}
-        />
+        <Pagination pageNumber={page ? +page : 1} isNext={result.isNext} />
       </div>
     </>
   );

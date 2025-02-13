@@ -23,9 +23,11 @@ export const metadata: Metadata = {
   description: "Developer community for coding Q&A and collaboration.",
 };
 
-export default async function Home({ searchParams }: SearchParamsProps) {
+export default async function Home(props: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) {
   const { userId } = await auth();
-
+  const searchParams = await props.searchParams;
   let result;
 
   if (searchParams?.filter === "recommended") {
